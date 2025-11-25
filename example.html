@@ -40,16 +40,17 @@
 
     async function testGetRequest() {
       try {
-        log('Testing GET request:', { function: 'GET_getUserData' });
+        log('Testing GET request (returns direct result):', { function: 'get_getUserData' });
         
         // Note: This will fail in real execution because there's no backend
         // But it demonstrates the API usage
-        const result = await window.api.GET_getUserData({ 
-          name: 'userId', 
-          value: '123' 
+        // API proxy returns direct result, not full response
+        const result = await window.api.get_getUserData({ 
+          userId: '123',
+          includeProfile: true
         });
         
-        log('GET Success:', result);
+        log('GET Success (direct result):', result);
       } catch (error) {
         log('GET Error (Expected - no backend):', error.message);
       }
@@ -57,14 +58,17 @@
 
     async function testPostRequest() {
       try {
-        log('Testing POST request:', { function: 'POST_createUser' });
+        log('Testing POST request (returns direct result):', { function: 'post_createUser' });
         
-        const result = await window.api.POST_createUser({ 
+        // Method prefix must be lowercase
+        // Returns direct result
+        const result = await window.api.post_createUser({ 
           name: 'John Doe',
-          email: 'john@example.com'
+          email: 'john@example.com',
+          age: 25
         });
         
-        log('POST Success:', result);
+        log('POST Success (direct result):', result);
       } catch (error) {
         log('POST Error (Expected - no backend):', error.message);
       }
@@ -75,9 +79,14 @@
         log('Testing custom base URL:', { baseUrl: '/custom/api' });
         
         const fn = new window.FunctionCall({ baseUrl: '/custom/api' });
-        const result = await fn.callFn('GET', 'testFunction', { test: 'data' });
         
-        log('Custom URL Success:', result);
+        // callFn returns full response
+        const response = await fn.callFn('GET', 'testFunction', { test: 'data' });
+        log('Custom URL with callFn (full response):', response);
+        
+        // callFnResult returns direct result
+        const result = await fn.callFnResult('GET', 'testFunction', { test: 'data' });
+        log('Custom URL with callFnResult (direct result):', result);
       } catch (error) {
         log('Custom URL Error (Expected - no backend):', error.message);
       }

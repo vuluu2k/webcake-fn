@@ -7,27 +7,29 @@ import api, { FunctionCall, type FunctionCallConfig, type ApiResponse } from './
 
 // Example 1: Using the API proxy with type inference
 async function example1() {
-  console.log('Example 1: API Proxy Usage');
+  console.log('Example 1: API Proxy Usage (Returns Direct Results)');
   
   try {
-    // Type-safe function calls with method prefix
-    const users = await api.GET_getUserList();
-    console.log('Users:', users);
+    // Note: method must be lowercase (get_, post_, put_, delete_)
+    // API proxy automatically returns direct results (not full response)
     
-    const result = await api.POST_createUser({
+    const users = await api.get_getUserList({ limit: 10 });
+    console.log('Users:', users); // Direct array
+    
+    const result = await api.post_createUser({
       name: 'John Doe',
       email: 'john@example.com'
     });
-    console.log('Created user:', result);
+    console.log('Created user:', result); // Direct result
     
-    const updated = await api.PUT_updateUser({
+    const updated = await api.put_updateUser({
       id: '123',
       status: 'active'
     });
-    console.log('Updated user:', updated);
+    console.log('Updated user:', updated); // Direct result
     
-    await api.DELETE_removeUser({ id: '123' });
-    console.log('User deleted');
+    const deleted = await api.delete_removeUser({ id: '123' });
+    console.log('Deleted:', deleted); // Direct result
   } catch (error) {
     console.error('Error:', error);
   }
@@ -38,18 +40,25 @@ async function example2() {
   console.log('Example 2: FunctionCall Class Usage');
   
   const config: FunctionCallConfig = {
-    baseURL: 'http://localhost:3000/api/v1/my-site'
+    baseUrl: 'http://localhost:3000/api/v1/my-site'
   };
   
   const fn = new FunctionCall(config);
   
   try {
-    // Type-safe method calls
-    const result = await fn.callFn('POST', 'processData', {
-      name: 'data',
-      value: 'test'
+    // callFn returns full response structure
+    const response = await fn.callFn('POST', 'processData', {
+      data: 'test',
+      timestamp: Date.now()
     });
-    console.log('Result:', result);
+    console.log('Full response:', response); // { data: { result: ... } }
+    
+    // callFnResult returns direct result
+    const result = await fn.callFnResult('POST', 'processData', {
+      data: 'test',
+      timestamp: Date.now()
+    });
+    console.log('Direct result:', result); // Direct data
   } catch (error) {
     console.error('Error:', error);
   }
@@ -66,14 +75,29 @@ async function example3() {
   }
   
   try {
-    // Type-safe response
-    const user = await api.GET_getUser({ 
-      name: 'userId', 
-      value: '123' 
+    // API proxy returns direct result (type-safe)
+    const user = await api.get_getUser({ 
+      userId: '123',
+      includeProfile: true
     }) as User;
     
     console.log('User name:', user.name);
     console.log('User email:', user.email);
+    
+    // Using FunctionCall with types
+    const fn = new FunctionCall({ baseUrl: '/api/v1/site-id' });
+    
+    // callFnResult with type parameter
+    const typedUser = await fn.callFnResult<User>('GET', 'getUser', { 
+      userId: '123' 
+    });
+    console.log('Typed user:', typedUser.name);
+    
+    // callFn with type parameter (returns full response)
+    const response = await fn.callFn<User>('GET', 'getUser', { 
+      userId: '123' 
+    });
+    console.log('Response structure:', response.data.result);
   } catch (error) {
     console.error('Error:', error);
   }
@@ -83,15 +107,18 @@ async function example3() {
 async function example4() {
   console.log('Example 4: Multiple Operations');
   
+  // All calls return direct results
   const operations = [
-    api.GET_getProducts(),
-    api.GET_getCategories(),
-    api.POST_syncData({ source: 'external' })
+    api.get_getProducts({ category: 'electronics' }),
+    api.get_getCategories({ limit: 20 }),
+    api.post_syncData({ source: 'external', timestamp: Date.now() })
   ];
   
   try {
-    const results = await Promise.all(operations);
-    console.log('All operations completed:', results);
+    const [products, categories, syncResult] = await Promise.all(operations);
+    console.log('Products:', products); // Direct array
+    console.log('Categories:', categories); // Direct array
+    console.log('Sync result:', syncResult); // Direct result
   } catch (error) {
     console.error('Error in operations:', error);
   }
@@ -102,21 +129,54 @@ async function example5() {
   console.log('Example 5: Error Handling');
   
   try {
-    const result = await api.POST_validateData({
-      input: 'test-data'
+    const result = await api.post_validateData({
+      input: 'test-data',
+      rules: ['required', 'email']
     });
     
-    console.log('Validation result:', result);
+    console.log('Validation result:', result); // Direct result
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       
-      if (error.message.includes('HTTP error')) {
-        console.error('Network error occurred');
-      } else if (error.message.includes('Function call failed')) {
-        console.error('Function execution failed');
+      if (error.message.includes('HTTP error! status: 400')) {
+        console.error('Bad request - check your parameters');
+      } else if (error.message.includes('HTTP error! status: 404')) {
+        console.error('Function not found');
+      } else if (error.message.includes('HTTP error! status: 500')) {
+        console.error('Server error occurred');
+      } else {
+        console.error('Unknown error occurred');
       }
     }
+  }
+}
+
+// Example 6: Comparing callFn vs callFnResult
+async function example6() {
+  console.log('Example 6: callFn vs callFnResult');
+  
+  const fn = new FunctionCall({ 
+    baseUrl: 'http://localhost:3000/api/v1/my-site'
+  });
+  
+  try {
+    // callFn returns full response
+    const fullResponse = await fn.callFn('GET', 'getUsers', { limit: 5 });
+    console.log('Full response structure:', fullResponse);
+    // Output: { data: { result: [...] } }
+    
+    // callFnResult returns only the result
+    const directResult = await fn.callFnResult('GET', 'getUsers', { limit: 5 });
+    console.log('Direct result:', directResult);
+    // Output: [...]
+    
+    // API proxy uses callFnResult internally
+    const apiResult = await api.get_getUsers({ limit: 5 });
+    console.log('API proxy result (same as callFnResult):', apiResult);
+    // Output: [...]
+  } catch (error) {
+    console.error('Error:', error);
   }
 }
 
@@ -126,7 +186,8 @@ export {
   example2,
   example3,
   example4,
-  example5
+  example5,
+  example6
 };
 
 // Main execution
@@ -140,6 +201,7 @@ async function main() {
   // await example3();
   // await example4();
   // await example5();
+  // await example6();
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

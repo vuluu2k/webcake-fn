@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-11-25
+
+### Added
+- **New `callFnResult()` method** that automatically extracts and returns direct result from response
+- Enhanced TypeScript definitions with separate types for `callFn()` and `callFnResult()`
+- Comprehensive examples demonstrating both methods in `example.ts`
+- Migration guide in README for users upgrading from previous versions
+- FAQ section in documentation
+
+### Changed
+- **BREAKING**: API proxy now returns direct results instead of full response structure
+  - Old: `const response = await api.get_users(); const data = response.result;`
+  - New: `const data = await api.get_users(); // Direct result`
+- **BREAKING**: Method prefix in API proxy must be lowercase
+  - Old: `api.GET_functionName()`, `api.POST_functionName()`
+  - New: `api.get_functionName()`, `api.post_functionName()`
+- **BREAKING**: Parameters format simplified to single object
+  - Old: `fn.callFn('GET', 'func', { name: 'key1', value: 'val1' }, { name: 'key2', value: 'val2' })`
+  - New: `fn.callFn('GET', 'func', { key1: 'val1', key2: 'val2' })`
+- **BREAKING**: Configuration property renamed from `baseURL` to `baseUrl`
+- Updated response structure to `{ data: { result: ... } }` format
+- API proxy internally uses `callFnResult()` for cleaner return values
+
+### Improved
+- Better TypeScript type inference for direct results
+- More intuitive API usage with less boilerplate code
+- Enhanced error handling examples
+- Comprehensive documentation with real-world examples
+- Updated all examples to reflect new API changes
+
+### Fixed
+- Type definitions now accurately reflect actual implementation
+- Response structure properly documented
+
+### Deprecated
+- None
+
+### Removed
+- `FunctionArg` interface (replaced with simple `Record<string, any>`)
+
+### Migration
+See README.md for detailed migration guide from v1.0.0 to v1.1.0
+
 ## [1.0.0] - 2025-11-25
 
 ### Added

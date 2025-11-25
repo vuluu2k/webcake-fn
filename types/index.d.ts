@@ -10,15 +10,7 @@ export interface FunctionCallConfig {
    * Base URL for API calls. If not provided, defaults to `/api/v1/{siteId}` in browser
    * or `/api/v1` in Node.js
    */
-  baseURL?: string;
-}
-
-/**
- * Function argument for API calls
- */
-export interface FunctionArg {
-  name: string;
-  value: any;
+  baseUrl?: string;
 }
 
 /**
@@ -27,12 +19,12 @@ export interface FunctionArg {
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 /**
- * API Response format
+ * API Response format from backend
  */
 export interface ApiResponse<T = any> {
-  success: boolean;
-  result?: T;
-  error?: string;
+  data: {
+    result: T;
+  };
 }
 
 /**
@@ -48,13 +40,33 @@ export declare class FunctionCall {
   constructor(config?: FunctionCallConfig);
   
   /**
-   * Call a backend function
+   * Call a backend function and return full response
    * @param method - HTTP method (GET, POST, PUT, DELETE, etc.)
    * @param functionName - Name of the function to call
-   * @param args - Arguments to pass to the function
-   * @returns Promise with the function result
+   * @param params - Parameters object to pass to the function
+   * @returns Promise with the full API response
+   * @example
+   * ```typescript
+   * const response = await fn.callFn('GET', 'getUsers', { limit: 10 });
+   * console.log(response); // { data: { result: [...] } }
+   * ```
    */
-  callFn(method: HttpMethod, functionName: string, ...args: FunctionArg[] | Record<string, any>[]): Promise<any>;
+  callFn<T = any>(method: HttpMethod, functionName: string, params?: Record<string, any>): Promise<ApiResponse<T>>;
+  
+  /**
+   * Call a backend function and return only the result
+   * Automatically extracts data.result from the response
+   * @param method - HTTP method (GET, POST, PUT, DELETE, etc.)
+   * @param functionName - Name of the function to call
+   * @param params - Parameters object to pass to the function
+   * @returns Promise with the direct result
+   * @example
+   * ```typescript
+   * const users = await fn.callFnResult('GET', 'getUsers', { limit: 10 });
+   * console.log(users); // [...]
+   * ```
+   */
+  callFnResult<T = any>(method: HttpMethod, functionName: string, params?: Record<string, any>): Promise<T>;
 }
 
 /**
