@@ -11,27 +11,30 @@ class FunctionCall {
     this.baseUrl = baseUrl || (siteId ? `/api/v1/${siteId}` : '/api/v1');
   }
 
-  async callFn(method, functionName, ...args) {
+  async callFn(method, functionName, params) {
+    const methodLower = method.toLowerCase();
     let url = `${this.baseUrl}/_functions/${functionName}`;
     let body;
 
-    if (method == "GET") {
+    if (methodLower === "get") {
       const queryParams = new URLSearchParams();
-      args.forEach((arg) => {
-        queryParams.append(arg.name, arg.value);
-      });
-      url += `?${queryParams.toString()}`;
+      queryParams.append('params', JSON.stringify(params));
+      url = `${url}?${queryParams.toString()}`;
     } else {
-      body = JSON.stringify({ args });
+      body = JSON.stringify({ params });
     }
 
     const options = {
-      method: method,
+      method: methodLower,
       headers: {
         "Content-Type": "application/json",
       },
-      body: body,
     };
+
+    // Only add body for non-GET requests
+    if (body) {
+      options.body = body;
+    }
 
     const response = await fetch(url, options);
 
@@ -42,9 +45,9 @@ class FunctionCall {
     return response.json();
   }
 
-  async callFnResult(method, functionName, ...args) {
-    const data = await this.callFn(method, functionName, ...args);
-    return data.result;
+  async callFnResult(method, functionName, params) {
+    const data = await this.callFn(method, functionName, params);
+    return data.data?.result;
   }
 }
 

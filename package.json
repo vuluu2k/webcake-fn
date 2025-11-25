@@ -21,7 +21,9 @@
     "build": "rollup -c",
     "build:prod": "rollup -c --environment NODE_ENV:production",
     "watch": "rollup -c -w",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test": "node --test test/*.test.js",
+    "test:watch": "node --test --watch test/*.test.js"
   },
   "keywords": [
     "webcake",

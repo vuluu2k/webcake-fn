@@ -12,9 +12,9 @@ const api = new Proxy(
   {},
   {
     get(_, fnName) {
-      return (...params) => {
+      return (params) => {
         const { method, funcName } = parse(fnName);
-        return functionCall.callFnResult(method, funcName, ...params);
+        return functionCall.callFnResult(method, funcName, params);
       };
     },
   }
