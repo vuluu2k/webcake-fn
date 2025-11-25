@@ -1,6 +1,6 @@
 {
   "name": "webcake-fn",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "wrapper api call fn from backend http function of webcake",
   "main": "index.js",
   "module": "index.js",
