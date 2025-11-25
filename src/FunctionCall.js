@@ -39,12 +39,11 @@ class FunctionCall {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    return response.json();
+  }
 
-    if (!data.success) {
-      throw new Error(data.error || "Function call failed");
-    }
-
+  async callFnResult(method, functionName, ...args) {
+    const data = await this.callFn(method, functionName, ...args);
     return data.result;
   }
 }

@@ -1,9 +1,10 @@
 # WebCake FN
 
-Wrapper API call functions cho backend HTTP functions của Webcake. Thư viện hỗ trợ cả Node.js và Browser.
+Wrapper API call functions cho backend HTTP functions của Webcake. Thư viện hỗ trợ cả Node.js và Browser với TypeScript definitions đầy đủ.
 
 [![npm version](https://img.shields.io/npm/v/webcake-fn.svg)](https://www.npmjs.com/package/webcake-fn)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
 ## 📦 Cài đặt
 
@@ -127,6 +128,38 @@ try {
   }
 }
 ```
+
+## 📘 TypeScript Support
+
+Thư viện có TypeScript definitions đầy đủ:
+
+```typescript
+import api, { FunctionCall, type FunctionCallConfig } from 'webcake-fn';
+
+// Type-safe API calls
+const users = await api.GET_getUserList();
+
+// Type-safe configuration
+const config: FunctionCallConfig = {
+  baseURL: 'http://localhost:3000/api/v1/my-site'
+};
+
+const fn = new FunctionCall(config);
+
+// Type-safe responses
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const user = await api.GET_getUser({ 
+  name: 'userId', 
+  value: '123' 
+}) as User;
+```
+
+Xem `example.ts` để biết thêm ví dụ TypeScript chi tiết.
 
 ## 📝 Response Format
 

@@ -10,6 +10,7 @@ rollup.config.js
 # Examples
 example.html
 example.node.js
+example.ts
 
 # IDE
 .vscode/

@@ -7,6 +7,7 @@
   "browser": "dist/webcake-fn.umd.min.js",
   "jsdelivr": "dist/webcake-fn.umd.min.js",
   "unpkg": "dist/webcake-fn.umd.min.js",
+  "types": "types/index.d.ts",
   "type": "module",
   "files": [
     "src/",

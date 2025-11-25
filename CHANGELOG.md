@@ -15,8 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multiple build formats: ESM and UMD (both minified and unminified)
 - Automatic site ID detection from HTML attribute
 - Custom baseUrl support
-- TypeScript definitions support
+- **Full TypeScript definitions** with comprehensive type safety
 - CDN support via jsdelivr and unpkg
+- TypeScript examples and documentation
 
 ### Features
 - Dynamic API proxy with automatic method parsing
