@@ -34,10 +34,14 @@
     "proxy",
     "api-client"
   ],
-  "author": "",
+  "author": "vuluu2k",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vuluu2k/webcake-fn.git"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.3",
