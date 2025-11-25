@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html x:id="test-site-123">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webcake FN - Example</title>
+</head>
+<body>
+  <h1>Webcake FN - Browser Test</h1>
+  
+  <div>
+    <h2>Test API Calls</h2>
+    <button onclick="testGetRequest()">Test GET Request</button>
+    <button onclick="testPostRequest()">Test POST Request</button>
+    <button onclick="testCustomBaseUrl()">Test Custom Base URL</button>
+  </div>
+
+  <div id="output" style="margin-top: 20px; padding: 10px; background: #f0f0f0;">
+    <h3>Output:</h3>
+    <pre id="result"></pre>
+  </div>
+
+  <!-- Load as ES Module -->
+  <script type="module">
+    import api, { FunctionCall } from './dist/webcake-fn.esm.js';
+    
+    window.api = api;
+    window.FunctionCall = FunctionCall;
+    
+    console.log('Webcake FN loaded successfully!');
+    console.log('Available: window.api, window.FunctionCall');
+  </script>
+
+  <script>
+    function log(message, data) {
+      const output = document.getElementById('result');
+      output.textContent += `\n${message}\n${JSON.stringify(data, null, 2)}\n`;
+      console.log(message, data);
+    }
+
+    async function testGetRequest() {
+      try {
+        log('Testing GET request:', { function: 'GET_getUserData' });
+        
+        // Note: This will fail in real execution because there's no backend
+        // But it demonstrates the API usage
+        const result = await window.api.GET_getUserData({ 
+          name: 'userId', 
+          value: '123' 
+        });
+        
+        log('GET Success:', result);
+      } catch (error) {
+        log('GET Error (Expected - no backend):', error.message);
+      }
+    }
+
+    async function testPostRequest() {
+      try {
+        log('Testing POST request:', { function: 'POST_createUser' });
+        
+        const result = await window.api.POST_createUser({ 
+          name: 'John Doe',
+          email: 'john@example.com'
+        });
+        
+        log('POST Success:', result);
+      } catch (error) {
+        log('POST Error (Expected - no backend):', error.message);
+      }
+    }
+
+    async function testCustomBaseUrl() {
+      try {
+        log('Testing custom base URL:', { baseUrl: '/custom/api' });
+        
+        const fn = new window.FunctionCall({ baseUrl: '/custom/api' });
+        const result = await fn.callFn('GET', 'testFunction', { test: 'data' });
+        
+        log('Custom URL Success:', result);
+      } catch (error) {
+        log('Custom URL Error (Expected - no backend):', error.message);
+      }
+    }
+  </script>
+</body>
+</html>
+

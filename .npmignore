@@ -1,0 +1,38 @@
+# Development files
+node_modules/
+.git/
+.gitignore
+*.log
+
+# Build config
+rollup.config.js
+
+# Examples
+example.html
+example.node.js
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Documentation source (keep built docs)
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+

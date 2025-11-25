@@ -1,11 +1,44 @@
 {
-  "name": "webcake_fn",
+  "name": "webcake-fn",
   "version": "1.0.0",
-  "description": "wrapper api call fn from backend http function of webacke",
+  "description": "wrapper api call fn from backend http function of webcake",
   "main": "index.js",
+  "module": "index.js",
+  "browser": "dist/webcake-fn.umd.min.js",
+  "jsdelivr": "dist/webcake-fn.umd.min.js",
+  "unpkg": "dist/webcake-fn.umd.min.js",
+  "type": "module",
+  "files": [
+    "src/",
+    "index.js",
+    "dist/",
+    "types/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "build:prod": "rollup -c --environment NODE_ENV:production",
+    "watch": "rollup -c -w",
+    "prepublishOnly": "npm run build"
   },
+  "keywords": [
+    "webcake",
+    "api",
+    "function",
+    "http",
+    "wrapper",
+    "proxy",
+    "api-client"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.53.3"
+  }
 }
