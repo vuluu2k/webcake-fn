@@ -233,6 +233,8 @@ fn.callFnResult('GET', 'func', { key: 'val' });
 
 ## CDN Usage
 
+### jsDelivr CDN
+
 ```html
 <!-- ESM -->
 <script type="module">
@@ -242,6 +244,22 @@ fn.callFnResult('GET', 'func', { key: 'val' });
 
 <!-- UMD -->
 <script src="https://cdn.jsdelivr.net/npm/webcake-fn/dist/webcake-fn.umd.min.js"></script>
+<script>
+  const users = await window.api.get_getUsers();
+</script>
+```
+
+### unpkg CDN
+
+```html
+<!-- ESM -->
+<script type="module">
+  import api from 'https://unpkg.com/webcake-fn/dist/webcake-fn.esm.min.js';
+  const users = await api.get_getUsers();
+</script>
+
+<!-- UMD -->
+<script src="https://unpkg.com/webcake-fn/dist/webcake-fn.umd.min.js"></script>
 <script>
   const users = await window.api.get_getUsers();
 </script>

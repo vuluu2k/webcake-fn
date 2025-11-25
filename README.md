@@ -1,18 +1,20 @@
 # WebCake FN
 
-Wrapper API call functions cho backend HTTP functions của Webcake. Thư viện hỗ trợ cả Node.js và Browser với TypeScript definitions đầy đủ.
+Wrapper API call functions for backend HTTP functions of Webcake. The library supports both Node.js and Browser with full TypeScript definitions.
 
 [![npm version](https://img.shields.io/npm/v/webcake-fn.svg)](https://www.npmjs.com/package/webcake-fn)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-## 📦 Cài đặt
+## 📦 Installation
 
 ```bash
 npm install webcake-fn
 ```
 
-Hoặc sử dụng CDN:
+Or use CDN:
+
+### jsDelivr CDN
 
 ```html
 <!-- ESM -->
@@ -24,32 +26,44 @@ Hoặc sử dụng CDN:
 <script src="https://cdn.jsdelivr.net/npm/webcake-fn/dist/webcake-fn.umd.min.js"></script>
 ```
 
-## 🚀 Sử dụng
+### unpkg CDN
+
+```html
+<!-- ESM -->
+<script type="module">
+  import api from 'https://unpkg.com/webcake-fn/dist/webcake-fn.esm.min.js';
+</script>
+
+<!-- UMD -->
+<script src="https://unpkg.com/webcake-fn/dist/webcake-fn.umd.min.js"></script>
+```
+
+## 🚀 Usage
 
 ### Browser (ESM)
 
 ```javascript
 import api from 'webcake-fn';
 
-// Gọi function với GET method - trả về kết quả trực tiếp
+// Call function with GET method - returns direct result
 const userData = await api.get_getUserData({ 
   userId: '123',
   includeProfile: true
 });
 
-// Gọi function với POST method - trả về kết quả trực tiếp
+// Call function with POST method - returns direct result
 const result = await api.post_createUser({ 
   name: 'John', 
   email: 'john@example.com' 
 });
 
-// Gọi function với PUT method
+// Call function with PUT method
 const updated = await api.put_updateProfile({
   userId: '123',
   bio: 'Developer'
 });
 
-// Gọi function với DELETE method
+// Call function with DELETE method
 const deleted = await api.delete_removeUser({
   userId: '123'
 });
@@ -60,14 +74,18 @@ const deleted = await api.delete_removeUser({
 ```html
 <html x:id="your-site-id">
 <head>
+  <!-- Using jsDelivr -->
   <script src="https://cdn.jsdelivr.net/npm/webcake-fn/dist/webcake-fn.umd.min.js"></script>
+  
+  <!-- Or using unpkg -->
+  <!-- <script src="https://unpkg.com/webcake-fn/dist/webcake-fn.umd.min.js"></script> -->
 </head>
 <body>
   <script>
     // Global access via window.api
     const api = window.api;
     
-    // API tự động trả về kết quả trực tiếp
+    // API automatically returns direct results
     api.get_getUsers({ limit: 10 }).then(users => {
       console.log(users); // Direct result
     });
@@ -81,7 +99,7 @@ const deleted = await api.delete_removeUser({
 ```javascript
 import api from 'webcake-fn';
 
-// Trả về kết quả trực tiếp, không cần parse response
+// Returns direct result, no need to parse response
 const data = await api.post_processData({
   input: 'value',
   options: { verbose: true }
@@ -90,19 +108,19 @@ const data = await api.post_processData({
 console.log(data); // Direct result from backend
 ```
 
-## 🔧 API nâng cao
+## 🔧 Advanced API
 
-### Sử dụng FunctionCall class trực tiếp
+### Using FunctionCall class directly
 
 ```javascript
 import { FunctionCall } from 'webcake-fn';
 
-// Tạo instance với custom baseUrl
+// Create instance with custom baseUrl
 const fn = new FunctionCall({ 
   baseUrl: 'http://localhost:3000/api/v1/your-site-id'
 });
 
-// Method 1: callFn() - Trả về response đầy đủ
+// Method 1: callFn() - Returns full response
 const response = await fn.callFn(
   'POST',           // HTTP method
   'myFunction',     // Function name
@@ -110,7 +128,7 @@ const response = await fn.callFn(
 );
 console.log(response); // { data: { result: ... } }
 
-// Method 2: callFnResult() - Trả về kết quả trực tiếp
+// Method 2: callFnResult() - Returns direct result
 const result = await fn.callFnResult(
   'POST',
   'myFunction',
@@ -119,58 +137,58 @@ const result = await fn.callFnResult(
 console.log(result); // Direct result
 ```
 
-### Sự khác biệt giữa callFn và callFnResult
+### Difference between callFn and callFnResult
 
 ```javascript
-// callFn() trả về response đầy đủ
+// callFn() returns full response
 const response = await fn.callFn('GET', 'getUsers', { limit: 10 });
 // response = { data: { result: [...users...] } }
 
-// callFnResult() trả về kết quả trực tiếp
+// callFnResult() returns direct result
 const users = await fn.callFnResult('GET', 'getUsers', { limit: 10 });
 // users = [...users...]
 
-// API proxy sử dụng callFnResult() nên trả về kết quả trực tiếp
+// API proxy uses callFnResult() so it returns direct result
 const users = await api.get_getUsers({ limit: 10 });
 // users = [...users...]
 ```
 
-### Format tên hàm
+### Function name format
 
-API sử dụng Proxy để tự động parse method và function name theo format:
+API uses Proxy to automatically parse method and function name in the format:
 
 ```
 method_functionName  (lowercase method)
 ```
 
-Ví dụ:
-- `get_listUsers` → GET request đến `/_functions/listUsers`
-- `post_createUser` → POST request đến `/_functions/createUser`
-- `put_updateUser` → PUT request đến `/_functions/updateUser`
-- `delete_removeUser` → DELETE request đến `/_functions/removeUser`
+Examples:
+- `get_listUsers` → GET request to `/_functions/listUsers`
+- `post_createUser` → POST request to `/_functions/createUser`
+- `put_updateUser` → PUT request to `/_functions/updateUser`
+- `delete_removeUser` → DELETE request to `/_functions/removeUser`
 
-**Lưu ý:** Method phải viết thường (lowercase) khi sử dụng API proxy.
+**Note:** Method must be lowercase when using API proxy.
 
-### Format Parameters
+### Parameters format
 
-Parameters được gửi dưới dạng object duy nhất:
+Parameters are sent as a single object:
 
 ```javascript
-// ✅ Đúng - Single object
+// ✅ Correct - Single object
 await api.post_createUser({
   name: 'John',
   email: 'john@example.com',
   age: 25
 });
 
-// ✅ Đúng - GET request với query params
+// ✅ Correct - GET request with query params
 await api.get_getUser({
   userId: '123',
   includeProfile: true
 });
 ```
 
-### Xử lý lỗi
+### Error handling
 
 ```javascript
 try {
@@ -189,19 +207,19 @@ try {
 
 ## 📘 TypeScript Support
 
-Thư viện có TypeScript definitions đầy đủ:
+The library has full TypeScript definitions:
 
 ```typescript
 import api, { FunctionCall, type FunctionCallConfig } from 'webcake-fn';
 
-// Type-safe API calls với kết quả trực tiếp
+// Type-safe API calls with direct results
 interface User {
   id: string;
   name: string;
   email: string;
 }
 
-// API proxy trả về kết quả trực tiếp
+// API proxy returns direct results
 const users = await api.get_getUserList({ limit: 10 }) as User[];
 
 // Type-safe configuration
@@ -211,25 +229,25 @@ const config: FunctionCallConfig = {
 
 const fn = new FunctionCall(config);
 
-// callFnResult trả về kết quả trực tiếp
+// callFnResult returns direct result
 const user = await fn.callFnResult('GET', 'getUser', { 
   userId: '123'
 }) as User;
 
-// callFn trả về response đầy đủ
+// callFn returns full response
 const response = await fn.callFn('GET', 'getUser', {
   userId: '123'
 });
 console.log(response.data.result); // User object
 ```
 
-Xem `example.ts` để biết thêm ví dụ TypeScript chi tiết.
+See `example.ts` for more detailed TypeScript examples.
 
 ## 📝 Response Format
 
 ### Backend Response Structure
 
-Backend function trả về JSON với cấu trúc:
+Backend function returns JSON with the structure:
 
 ```json
 {
@@ -239,7 +257,7 @@ Backend function trả về JSON với cấu trúc:
 }
 ```
 
-Ví dụ chi tiết:
+Detailed example:
 
 ```json
 {
@@ -255,28 +273,28 @@ Ví dụ chi tiết:
 }
 ```
 
-### Cách thư viện xử lý
+### How the library handles it
 
 ```javascript
-// callFn() - Trả về toàn bộ response
+// callFn() - Returns full response
 const response = await fn.callFn('GET', 'getUsers');
 console.log(response);
 // { data: { result: [...] } }
 
-// callFnResult() - Tự động extract result
+// callFnResult() - Automatically extracts result
 const users = await fn.callFnResult('GET', 'getUsers');
 console.log(users);
 // [...]
 
-// API proxy - Sử dụng callFnResult() nên trả về result trực tiếp
+// API proxy - Uses callFnResult() so returns result directly
 const users = await api.get_getUsers();
 console.log(users);
 // [...]
 ```
 
-## 📚 Ví dụ thực tế
+## 📚 Real-world Examples
 
-### Ví dụ 1: CRUD Operations
+### Example 1: CRUD Operations
 
 ```javascript
 import api from 'webcake-fn';
@@ -310,23 +328,23 @@ const deleted = await api.delete_deleteUser({
 console.log(deleted); // { success: true }
 ```
 
-### Ví dụ 2: Với Custom Base URL
+### Example 2: With Custom Base URL
 
 ```javascript
 import { FunctionCall } from 'webcake-fn';
 
-// Kết nối đến server cụ thể
+// Connect to specific server
 const fn = new FunctionCall({
   baseUrl: 'http://demo.localhost:24679/api/v1/04676357-8025-4e34-9e90-7282777b8536'
 });
 
-// Sử dụng callFnResult để lấy kết quả trực tiếp
+// Use callFnResult to get direct result
 const data = await fn.callFnResult('GET', 'fetch', { 
   test: 'data' 
 });
 console.log(data); // Direct result
 
-// Sử dụng callFn để lấy response đầy đủ
+// Use callFn to get full response
 const response = await fn.callFn('POST', 'testFunction', {
   message: 'Hello',
   timestamp: new Date().toISOString()
@@ -334,12 +352,12 @@ const response = await fn.callFn('POST', 'testFunction', {
 console.log(response); // { data: { result: ... } }
 ```
 
-### Ví dụ 3: Multiple Calls với Promise.all
+### Example 3: Multiple Calls with Promise.all
 
 ```javascript
 import api from 'webcake-fn';
 
-// Gọi nhiều functions cùng lúc
+// Call multiple functions simultaneously
 const [users, posts, comments] = await Promise.all([
   api.get_getUsers({ limit: 10 }),
   api.get_getPosts({ limit: 20 }),
@@ -351,7 +369,7 @@ console.log(posts); // [...]
 console.log(comments); // [...]
 ```
 
-### Ví dụ 4: Error Handling
+### Example 4: Error Handling
 
 ```javascript
 import api from 'webcake-fn';
@@ -377,15 +395,15 @@ async function fetchUserData(userId) {
 
 ## 🔑 Site ID
 
-Trong browser, thư viện tự động lấy site ID từ attribute `x:id` của thẻ `<html>`:
+In browser, the library automatically gets site ID from the `x:id` attribute of the `<html>` tag:
 
 ```html
 <html x:id="your-site-id">
 ```
 
-URL mặc định sẽ là: `/api/v1/{siteId}/_functions/{functionName}`
+Default URL will be: `/api/v1/{siteId}/_functions/{functionName}`
 
-Trong Node.js hoặc khi muốn override, sử dụng `baseUrl`:
+In Node.js or when you want to override, use `baseUrl`:
 
 ```javascript
 const fn = new FunctionCall({ 
@@ -393,80 +411,80 @@ const fn = new FunctionCall({
 });
 ```
 
-## 🔄 Migration Guide (Nếu đang dùng phiên bản cũ)
+## 🔄 Migration Guide (If upgrading from older version)
 
-### Thay đổi chính
+### Main changes
 
-1. **API Proxy giờ trả về kết quả trực tiếp**
+1. **API Proxy now returns direct results**
 ```javascript
-// Trước (phiên bản cũ)
+// Before (old version)
 const response = await api.GET_getUsers();
 const users = response.result;
 
-// Bây giờ
-const users = await api.get_getUsers(); // Trả về kết quả trực tiếp
+// Now
+const users = await api.get_getUsers(); // Returns direct result
 ```
 
-2. **Method phải viết thường**
+2. **Method must be lowercase**
 ```javascript
-// Trước
+// Before
 api.GET_getUsers()
 api.POST_createUser()
 
-// Bây giờ
+// Now
 api.get_getUsers()
 api.post_createUser()
 ```
 
-3. **Parameters format đơn giản hơn**
+3. **Simplified parameters format**
 ```javascript
-// Trước (có thể dùng FunctionArg[])
+// Before (could use FunctionArg[])
 await fn.callFn('GET', 'getUser', 
   { name: 'userId', value: '123' },
   { name: 'includeProfile', value: true }
 );
 
-// Bây giờ (single object)
+// Now (single object)
 await fn.callFn('GET', 'getUser', {
   userId: '123',
   includeProfile: true
 });
 ```
 
-4. **Có thêm method callFnResult()**
+4. **New callFnResult() method**
 ```javascript
-// callFn() - Trả về full response
+// callFn() - Returns full response
 const response = await fn.callFn('GET', 'getUsers');
 // response = { data: { result: [...] } }
 
-// callFnResult() - Trả về result trực tiếp
+// callFnResult() - Returns direct result
 const users = await fn.callFnResult('GET', 'getUsers');
 // users = [...]
 ```
 
 ## ❓ FAQ
 
-### Tại sao API proxy trả về kết quả trực tiếp?
+### Why does API proxy return direct results?
 
-Để đơn giản hóa code và giảm boilerplate. Thay vì phải viết:
+To simplify code and reduce boilerplate. Instead of writing:
 
 ```javascript
 const response = await api.get_getUsers();
 const users = response.result;
 ```
 
-Giờ chỉ cần:
+Now you only need:
 
 ```javascript
 const users = await api.get_getUsers();
 ```
 
-### Khi nào nên dùng callFn() vs callFnResult()?
+### When to use callFn() vs callFnResult()?
 
-- **callFnResult()**: Dùng khi chỉ cần kết quả (phổ biến nhất)
-- **callFn()**: Dùng khi cần access toàn bộ response structure
+- **callFnResult()**: Use when you only need the result (most common)
+- **callFn()**: Use when you need to access the full response structure
 
-### Làm sao để debug khi có lỗi?
+### How to debug when there's an error?
 
 ```javascript
 try {
@@ -480,19 +498,19 @@ try {
 }
 ```
 
-### GET request xử lý params như thế nào?
+### How does GET request handle params?
 
-GET request tự động chuyển params thành query string:
+GET request automatically converts params to query string:
 
 ```javascript
 // Params object
 await api.get_getUsers({ limit: 10, offset: 0 });
 
-// Chuyển thành URL
+// Converts to URL
 // /_functions/getUsers?params={"limit":10,"offset":0}
 ```
 
-## 📦 Các file build
+## 📦 Build Files
 
 - `dist/webcake-fn.esm.js` - ES Module (development)
 - `dist/webcake-fn.esm.min.js` - ES Module (production)
@@ -502,13 +520,13 @@ await api.get_getUsers({ limit: 10, offset: 0 });
 ## 🛠️ Development
 
 ```bash
-# Build thư viện
+# Build library
 npm run build
 
 # Watch mode (auto rebuild)
 npm run watch
 
-# Test với demo server
+# Test with demo server
 node test-demo.js
 ```
 
