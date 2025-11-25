@@ -1,0 +1,11 @@
+{
+  "name": "webcake_fn",
+  "version": "1.0.0",
+  "description": "wrapper api call fn from backend http function of webacke",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
